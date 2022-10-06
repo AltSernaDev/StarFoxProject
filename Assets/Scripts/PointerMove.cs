@@ -5,17 +5,26 @@ using UnityEngine;
 
 public class PointerMove : MonoBehaviour
 {
+    private Rigidbody rg;
     private Vector3 pointerMoVector3;
-    [SerializeField] private float speedPointMove=5;
-    
+    private float x, y;
+    [SerializeField] private float speedPointMove = 5;
+
+    private void Start()
+    {
+        rg = gameObject.GetComponent<Rigidbody>();
+    }
+
     void Update()
     {
-        pointerMoVector3 = new Vector3(Input.GetAxis("Horizontal") * speedPointMove,
-            -Input.GetAxis("Vertical") * speedPointMove, 0);
+        x = Input.GetAxisRaw("Horizontal");
+        y = -Input.GetAxisRaw("Vertical");
     }
+
+
 
     private void FixedUpdate()
     {
-        transform.position = pointerMoVector3;
+        transform.position += (new Vector3(x, y, 0).normalized) * Time.deltaTime * speedPointMove;
     }
 }
