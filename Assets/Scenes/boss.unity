@@ -423,10 +423,14 @@ MonoBehaviour:
   health: 1000
   state: 0
   isActionReady: 0
+  phase: 0
   missilePrefab: {fileID: 6278435774710111828, guid: 6be9561ee8fc1514197049b24ec683f6, type: 3}
-  time: 3
-  speed: 2
-  damage: 10
+  timeM: 5
+  speedM: 2
+  damageM: 10
+  blackHolePrefab: {fileID: 4199933686276108053, guid: e2701c531bd834244829378cb4332019, type: 3}
+  timeB: 7
+  damageB: 5
 --- !u!1 &1908279709
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,7 +605,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2099319743}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.18, y: 2.181087, z: 0}
+  m_LocalPosition: {x: -6.58, y: 3.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -616,10 +620,10 @@ Rigidbody:
   m_GameObject: {fileID: 2099319743}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 112
   m_CollisionDetection: 0

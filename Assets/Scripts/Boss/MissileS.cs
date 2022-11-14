@@ -28,7 +28,7 @@ public class MissileS : MonoBehaviour
     {
         if (!exploted)
         {
-            acceleration = target.position - transform.position;
+            acceleration = (target.position - transform.position).normalized * speed;
             velocity += acceleration * Time.deltaTime;
 
             LookAt(transform.position + velocity);
