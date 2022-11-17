@@ -13,6 +13,7 @@ public class Shooting : MonoBehaviour
     [SerializeField] private Transform pointer;
     [SerializeField] private Transform canon;
     [SerializeField] private float laserSpeed = 100;
+    [SerializeField] private Transform camera;
 
     private void Update()
     {
@@ -39,6 +40,7 @@ public class Shooting : MonoBehaviour
         laserShotCode.gameObject.transform.position = canon.position;
         
         Vector3 dirVector = (pointer.position-canon.position).normalized;
+        //Vector3 dirVector = (pointer.position-camera.position).normalized;
         laserShotCode.shooting(dirVector,laserSpeed);
     }
 }
