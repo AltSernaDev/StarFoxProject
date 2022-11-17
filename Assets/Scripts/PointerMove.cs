@@ -26,5 +26,11 @@ public class PointerMove : MonoBehaviour
     private void FixedUpdate()
     {
         transform.position += (new Vector3(x, y, 0).normalized) * Time.deltaTime * speedPointMove;
+        
+        
+        var pos = transform.position;
+        pos.x =  Mathf.Clamp(transform.position.x, -14f, 14f);
+        pos.y = Mathf.Clamp(transform.position.y, -10f, 10f);
+        transform.position = pos;
     }
 }
