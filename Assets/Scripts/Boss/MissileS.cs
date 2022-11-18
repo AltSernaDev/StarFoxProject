@@ -19,7 +19,7 @@ public class MissileS : MonoBehaviour
 
     private void Start()
     {
-        particleSystem = gameObject.GetComponent<ParticleSystem>();
+        particleSystem = transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
         target = GameObject.FindWithTag("Player").transform;
         Invoke("autoDestroy", time);
     }
@@ -69,7 +69,7 @@ public class MissileS : MonoBehaviour
         if (collision.gameObject.tag != "Player")
             return;
         else;
-            //collision.gameObject.GetComponent </ PlayerHelthCode /> ().takeDamage(damage);
+            collision.gameObject.GetComponent<Health>().TakeDamage(damage);
 
         autoDestroy();
     }

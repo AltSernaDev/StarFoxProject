@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class BossManager: MonoBehaviour
 {
     public static BossManager instance;
 
+
     [SerializeField] private float health = 1000;
+    Animator animator;  
+
     public enum State
     {
         idle,
@@ -25,6 +29,7 @@ public class BossManager: MonoBehaviour
     public float Health { get => health; }
 
     [Header("Missile")]
+    [SerializeField] Transform missileSpawn;
     [SerializeField] GameObject missilePrefab;
     [SerializeField] float timeM, speedM, damageM;
     MissileS missileCode;
@@ -34,12 +39,19 @@ public class BossManager: MonoBehaviour
     [SerializeField] float timeB, damageB;
     BlackHoleS blackHoleCode;
 
+    Transform player_;
+
     private void Awake()
     {
         if (instance != null)
             Destroy(this);
         else
             instance = this;
+    }
+    private void Start()
+    {
+        player_ = GameObject.FindGameObjectWithTag("Player").transform;
+        animator = gameObject.GetComponent<Animator>();
     }
     private void Update()
     {
@@ -49,6 +61,14 @@ public class BossManager: MonoBehaviour
             //change state
             ActionStateMachine(PhacesStateMachine(health));
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (health - damage >= 0)
+            health -= damage;
+        else
+            health = 0;
     }
 
     State PhacesStateMachine(float health_)
@@ -114,144 +134,223 @@ public class BossManager: MonoBehaviour
    
     IEnumerator IdleCoroutine()
     {
-        float timing = 7;
+        float timing = 12;
+        animator.SetInteger("states", 0); //jales pikos
         yield return new WaitForSeconds(timing / ((phase + 1) / 2)); 
         isActionReady = true;
     }
     IEnumerator MovingCoroutine()
     {
-        float timeLeft = 2;
-        while (timeLeft > 0) // revisar distancia 
+        float timeLeft = 1;
+        Vector3 target = player_.position;
+        Vector3 targetF = player_.forward;
+        Vector3 startSpeed = ((target - (targetF * 5)) - transform.position).normalized * -10;
+
+        animator.SetFloat("speedMultiply", 0.4f);
+        animator.SetInteger("states", 3);        
+
+        yield return new WaitForSeconds(3.6f);//charge
+
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 4);
+
+        while (timeLeft > 0) 
         {
-            transform.position = Vector3.Lerp(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position, Time.deltaTime); // mover tempo
+            transform.position = Vector3.SmoothDamp(transform.position, target - (targetF * 20) + (new Vector3(0, -15, 0)), ref startSpeed, timeLeft);
             timeLeft -= Time.deltaTime; 
+
             yield return null;
         }
+
+        yield return null;
+
+        transform.DOMove(transform.position + new Vector3(0, 30, 0), 3);
+        yield return new WaitForSeconds(3);
+
+        yield return null;
+
+        transform.DOMove(/*transform.parent.position*/ new Vector3(0, -4, 25), 3);
+        yield return new WaitForSeconds(3);
+
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 0);
+
         ActionStateMachine(State.idle);
     }
     IEnumerator Missile1Coroutine()
     {
+        animator.SetFloat("speedMultiply", 1.8f);
+        animator.SetInteger("states", 1);
+
         yield return new WaitForSeconds(1.8f); //charge
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 2);
+
+        yield return new WaitForSeconds(0.5f);
+
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM, damageM);
 
         yield return new WaitForSeconds(1.2f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM, damageM);
 
         yield return new WaitForSeconds(1.8f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.5f, damageM * 1.5f);
+
+        yield return new WaitForSeconds(timeM);
 
         ActionStateMachine(State.moving);
     }
     IEnumerator Missile2Coroutine()
     {
+        animator.SetFloat("speedMultiply", 1.89f);
+        animator.SetInteger("states", 1);
+
         yield return new WaitForSeconds(1.5f); //charge
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 2);
+
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.2f, damageM);
 
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(1f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.2f, damageM);
 
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(1f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.2f, damageM);
 
         yield return new WaitForSeconds(1.8f);
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 2f, damageM * 2f);
+
+        yield return new WaitForSeconds(timeM);
 
         ActionStateMachine(State.moving);
     }
     IEnumerator Missile3Coroutine()
     {
+        animator.SetFloat("speedMultiply", 1.89f);
+        animator.SetInteger("states", 1);
+
         yield return new WaitForSeconds(1.5f); //charge
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 2);
+
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.5f, damageM);
         yield return new WaitForSeconds(0.2f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.5f, damageM);
         yield return new WaitForSeconds(0.2f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.5f, damageM);
 
-        yield return new WaitForSeconds(1f); //2
+        yield return new WaitForSeconds(1.5f); //2
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.8f, damageM);
         yield return new WaitForSeconds(0.2f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.8f, damageM);
         yield return new WaitForSeconds(0.2f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 1.8f, damageM);
 
-        yield return new WaitForSeconds(0.6f); //3
+        yield return new WaitForSeconds(1.5f); //3
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 2.2f, damageM);
         yield return new WaitForSeconds(0.15f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 2.2f, damageM);
         yield return new WaitForSeconds(0.15f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 2.2f, damageM);
         yield return new WaitForSeconds(0.15f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 2.2f, damageM);
         yield return new WaitForSeconds(0.15f);
 
-        missileCode = Instantiate(missilePrefab, transform).GetComponent<MissileS>();
+        missileCode = Instantiate(missilePrefab, missileSpawn).GetComponent<MissileS>();
         missileCode.SetValues(timeM, speedM * 2.2f, damageM);
-        yield return new WaitForSeconds(0.15f);
+
+        yield return new WaitForSeconds(timeM);
 
         ActionStateMachine(State.moving);
     }
     IEnumerator BlackHole2()
     {
-        yield return new WaitForSeconds(1.8f); //charge
+        animator.SetFloat("speedMultiply", 1.5f);
+        animator.SetInteger("states", 5);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (GameObject.FindGameObjectWithTag("Player").transform.position + GameObject.FindGameObjectWithTag("Player").transform.forward * 1.5f), Quaternion.Euler(Vector3.zero)).GetComponent<BlackHoleS>();
+        yield return new WaitForSeconds(2f); //charge
+
+        animator.SetFloat("speedMultiply", 1.42f);
+        animator.SetInteger("states", 6);
+
+        yield return new WaitForSeconds(1.2f);
+
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(0.8f);
+
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 7);
+
+        yield return new WaitForSeconds(1);
 
         ActionStateMachine(State.missile2);
     }
     IEnumerator BlackHole3()
     {
-        yield return new WaitForSeconds(1.8f); //charge
+        animator.SetFloat("speedMultiply", 1.5f);
+        animator.SetInteger("states", 5);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (GameObject.FindGameObjectWithTag("Player").transform.position + GameObject.FindGameObjectWithTag("Player").transform.forward * 1.5f), Quaternion.Euler(Vector3.zero)).GetComponent<BlackHoleS>();
+        yield return new WaitForSeconds(2f); //charge
+
+        animator.SetFloat("speedMultiply", 1.42f);
+        animator.SetInteger("states", 6);
+
+        yield return new WaitForSeconds(1.2f);
+
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (GameObject.FindGameObjectWithTag("Player").transform.position + GameObject.FindGameObjectWithTag("Player").transform.forward * 1.5f), Quaternion.Euler(Vector3.zero)).GetComponent<BlackHoleS>();
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (GameObject.FindGameObjectWithTag("Player").transform.position + GameObject.FindGameObjectWithTag("Player").transform.forward * 1.5f), Quaternion.Euler(Vector3.zero)).GetComponent<BlackHoleS>();
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(0.8f);
+
+        animator.SetFloat("speedMultiply", 1f);
+        animator.SetInteger("states", 7);
+
+        yield return new WaitForSeconds(1);
 
         ActionStateMachine(State.missile3);
     }

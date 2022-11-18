@@ -14,8 +14,12 @@ public class BlackHoleS : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         playerRB = player.GetComponent<Rigidbody>();
-        Invoke("autoDestroy", time);
+        gameObject.GetComponent<Collider>().enabled = false;
+
+        Invoke("AutoDestroy", time);
+        Invoke("EnableTrigger", 1);
     }
+    /*
     private void Update()
     {
         if (catch_)
@@ -24,13 +28,19 @@ public class BlackHoleS : MonoBehaviour
             //player.GetComponent </ PlayerHelthCode /> ().takeDamage(damage * Time.deltaTime);
         }
     }
+    */
 
     public void SetValues(float time_, float damage_)
     {
         time = time_;
         damage = damage_;
     }
-    void autoDestroy()
+
+    void EnableTrigger()
+    {
+        gameObject.GetComponent<Collider>().enabled = true;
+    }
+    void AutoDestroy()
     {
         StartCoroutine(Disappear());
     }
@@ -43,6 +53,16 @@ public class BlackHoleS : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            player.GetComponent<Health>().TakeDamage(damage * Time.deltaTime);
+            playerRB.AddForce(transform.position - player.transform.position);
+        }
+    }
+
+    /*
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -53,4 +73,5 @@ public class BlackHoleS : MonoBehaviour
         if (other.CompareTag("Player"))
             catch_ = false;
     }
+    */
 }

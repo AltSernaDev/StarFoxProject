@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private int healthPlayer = 100;
+    [SerializeField] private float healthPlayer = 100;
+    
     //private Collider collRef;
     
 
-    public void TakeDamage(int dmgPoint)
+    public void TakeDamage(float dmgPoint)
     {
         healthPlayer -= dmgPoint;
     }

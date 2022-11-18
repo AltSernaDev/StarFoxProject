@@ -8,6 +8,8 @@ public class PointerMove : MonoBehaviour
     private Rigidbody rg;
     private Vector3 pointerMoVector3;
     private float x, y;
+    [SerializeField] private float clampX = 14f;
+    [SerializeField] private float clampY = 9f;
     [SerializeField] private float speedPointMove = 5;
 
     private void Start()
@@ -29,8 +31,8 @@ public class PointerMove : MonoBehaviour
         
         
         var pos = transform.position;
-        pos.x =  Mathf.Clamp(transform.position.x, -14f, 14f);
-        pos.y = Mathf.Clamp(transform.position.y, -10f, 10f);
+        pos.x =  Mathf.Clamp(transform.position.x, -clampX, clampX);
+        pos.y = Mathf.Clamp(transform.position.y, -clampY, clampY);
         transform.position = pos;
     }
 }
