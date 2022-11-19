@@ -20,6 +20,8 @@ public class LerpCamera : MonoBehaviour
 
         if (isCam)
         {
+            target.x = Mathf.Clamp(transform.position.x, -10, 10);
+            target.y = Mathf.Clamp(transform.position.y, -8, 8);
             target = new Vector3(airwing.position.x, transform.position.y * 1.5f, transform.position.z);
         }
         else

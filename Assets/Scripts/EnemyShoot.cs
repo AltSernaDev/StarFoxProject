@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
-public class EnemyShoot : MonoBehaviour
+public class EnemyShoot : MonoBehaviour, HitInterface
 {
     [SerializeField] private float fireRate = 0.45f;
     [SerializeField] private float ratePerBurst = 0.89f;
@@ -15,6 +16,7 @@ public class EnemyShoot : MonoBehaviour
     [SerializeField] private float laserSpeed = 600f;
     private float fireTime, burstTime;
     private int currentAmmo;
+    [SerializeField] private float enemyDmg = 10;
 
 
     private void Start()
@@ -28,9 +30,9 @@ public class EnemyShoot : MonoBehaviour
         laserShotCode = Instantiate(laserObj,null).GetComponent<LaserShoot>();
         laserShotCode.gameObject.transform.position = canon.position;
         
-        Vector3 dirVector = ((playerPos.position+Vector3.forward)-canon.position).normalized;
+        Vector3 dirVector = ((playerPos.position)-canon.position).normalized;
         //Vector3 dirVector = (pointer.position-camera.position).normalized;
-        laserShotCode.shooting(dirVector,laserSpeed);
+        laserShotCode.shooting(dirVector,laserSpeed,enemyDmg);
     }
     
     
@@ -55,5 +57,11 @@ public class EnemyShoot : MonoBehaviour
             }
         }
         fireTime += Time.deltaTime;
+    }
+
+    public void hit(float dmgPoints)
+    {
+        transform.DOShakePosition(0.15f, 1.5f, 12, 10, false, false, ShakeRandomnessMode.Harmonic);
+        Destroy(gameObject,0.165f);
     }
 }
