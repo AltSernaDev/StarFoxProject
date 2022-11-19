@@ -7,28 +7,21 @@ public class BlackHoleS : MonoBehaviour
     private float time = 5, damage = 5;
     bool catch_;
 
-    Rigidbody playerRB;
+    //Rigidbody pointerRB;
     GameObject player;
+    GameObject pointer;
+    PointerMove pointerCode;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        playerRB = player.GetComponent<Rigidbody>();
+        pointer = GameObject.FindGameObjectWithTag("Pointer");
+        pointerCode = pointer.GetComponent<PointerMove>();
         gameObject.GetComponent<Collider>().enabled = false;
 
         Invoke("AutoDestroy", time);
         Invoke("EnableTrigger", 1);
     }
-    /*
-    private void Update()
-    {
-        if (catch_)
-        {
-            playerRB.AddForce(transform.position - player.transform.position);
-            //player.GetComponent </ PlayerHelthCode /> ().takeDamage(damage * Time.deltaTime);
-        }
-    }
-    */
 
     public void SetValues(float time_, float damage_)
     {
@@ -46,32 +39,16 @@ public class BlackHoleS : MonoBehaviour
     }
     IEnumerator Disappear()
     {
-        /*transform.GetChild(0).gameObject.SetActive(false);
-        particleSystem.Play();
-        yield return new WaitUntil(() => particleSystem.isPlaying == false);*/
         yield return null; //temp
         Destroy(gameObject);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Pointer"))
         {
             player.GetComponent<Health>().TakeDamage(damage * Time.deltaTime);
-            playerRB.AddForce(transform.position - player.transform.position);
+            pointerCode.modifier = (transform.position - pointer.transform.position) * 0.327f;
         }
     }
-
-    /*
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            catch_ = true;
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            catch_ = false;
-    }
-    */
 }

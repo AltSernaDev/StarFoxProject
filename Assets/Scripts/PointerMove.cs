@@ -13,6 +13,8 @@ public class PointerMove : MonoBehaviour
     [SerializeField] private float clampY = 9f;
     [SerializeField] private float speedPointMove = 5;
 
+    [NonSerialized] public Vector3 modifier;
+
     private void Start()
     {
         rg = gameObject.GetComponent<Rigidbody>();
@@ -34,7 +36,8 @@ public class PointerMove : MonoBehaviour
             pos.x =  Mathf.Clamp(transform.position.x, -clampX, clampX);
             pos.y = Mathf.Clamp(transform.position.y, -clampY, clampY);
             transform.position = pos;
-            transform.position += (new Vector3(x, y, 0).normalized) * Time.deltaTime * speedPointMove;
+            transform.position += (new Vector3(x, y, 0).normalized + new Vector3(modifier.x, modifier.y, 0)) * Time.deltaTime * speedPointMove;
+            modifier = Vector3.zero;
         }
         else
         {
