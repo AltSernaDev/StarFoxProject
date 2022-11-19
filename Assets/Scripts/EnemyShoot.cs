@@ -7,7 +7,6 @@ public class EnemyShoot : MonoBehaviour
 {
     [SerializeField] private float fireRate = 0.45f;
     [SerializeField] private float ratePerBurst = 0.89f;
-    [SerializeField] private shootMode _shootMode;
     [SerializeField] private int ammoPerBurst;
     private LaserShoot laserShotCode;
     [SerializeField] private GameObject laserObj;
@@ -20,6 +19,7 @@ public class EnemyShoot : MonoBehaviour
 
     private void Start()
     {
+        burstTime = ratePerBurst;
         playerPos = GameObject.FindWithTag("Player").transform;
     }
 
@@ -33,16 +33,10 @@ public class EnemyShoot : MonoBehaviour
         laserShotCode.shooting(dirVector,laserSpeed);
     }
     
-    public enum shootMode
-    {
-        singleShot,
-        dobleShot,
-        tripleShot
-    }
     
     void Update()
     {
-        /*if (fireTime > fireRate)
+        if (fireTime > fireRate)
         {
             if (currentAmmo < ammoPerBurst)
             {
@@ -52,16 +46,14 @@ public class EnemyShoot : MonoBehaviour
             }
             else
             {
-                burstTime += Time.deltaTime;
+                burstTime -= Time.deltaTime;
+                if (burstTime<0)
+                {
+                    currentAmmo = 0;
+                    burstTime = ratePerBurst;
+                }
             }
-        }*/
-
-        if (fireTime > fireRate)
-        {
-            shoot();
-            fireTime = 0;
         }
-        
         fireTime += Time.deltaTime;
     }
 }

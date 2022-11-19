@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PointerMove : MonoBehaviour
 {
@@ -27,12 +28,18 @@ public class PointerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position += (new Vector3(x, y, 0).normalized) * Time.deltaTime * speedPointMove;
-        
-        
-        var pos = transform.position;
-        pos.x =  Mathf.Clamp(transform.position.x, -clampX, clampX);
-        pos.y = Mathf.Clamp(transform.position.y, -clampY, clampY);
-        transform.position = pos;
+        if (!AirwingMove.airWingCode.crashed)
+        {
+            var pos = transform.position;
+            pos.x =  Mathf.Clamp(transform.position.x, -clampX, clampX);
+            pos.y = Mathf.Clamp(transform.position.y, -clampY, clampY);
+            transform.position = pos;
+            transform.position += (new Vector3(x, y, 0).normalized) * Time.deltaTime * speedPointMove;
+        }
+        else
+        {
+            transform.position +=
+                new Vector3(Random.Range(0, 1), Random.Range(0, 1), 0) * Time.deltaTime * (speedPointMove*2);
+        }
     }
 }

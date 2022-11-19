@@ -40,7 +40,6 @@ public class Shooting : MonoBehaviour
         laserShotCode.gameObject.transform.position = canon.position;
         
         Vector3 dirVector = (pointer.position-canon.position).normalized;
-        //Vector3 dirVector = (pointer.position-camera.position).normalized;
         laserShotCode.shooting(dirVector,laserSpeed);
     }
 }

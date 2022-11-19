@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,5 +17,10 @@ public class LaserShoot : MonoBehaviour
     {
         rgLaser = gameObject.GetComponent<Rigidbody>();
         rgLaser.AddForce(direction * laserSpeed, ForceMode.Force);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        throw new NotImplementedException();
     }
 }
