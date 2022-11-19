@@ -71,6 +71,10 @@ public class BossManager: MonoBehaviour
             health = 0;
     }
 
+    public void IsActionReady()
+    {
+        isActionReady = true;
+    }
     State PhacesStateMachine(float health_)
     {
         State state_ = State.idle;
@@ -169,7 +173,7 @@ public class BossManager: MonoBehaviour
 
         yield return null;
 
-        transform.DOMove(/*transform.parent.position*/ new Vector3(0, -4, 25), 3);
+        transform.DOMove(transform.parent.position + new Vector3(0, -9, 60)/*transform.parent.position new Vector3(0, -4, 25)*/, 3);
         yield return new WaitForSeconds(3);
 
         animator.SetFloat("speedMultiply", 1f);
