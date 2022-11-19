@@ -71,6 +71,10 @@ public class BossManager: MonoBehaviour
             health = 0;
     }
 
+    public void IsActionReady()
+    {
+        isActionReady = true;
+    }
     State PhacesStateMachine(float health_)
     {
         State state_ = State.idle;
@@ -169,7 +173,7 @@ public class BossManager: MonoBehaviour
 
         yield return null;
 
-        transform.DOMove(/*transform.parent.position*/ new Vector3(0, -4, 25), 3);
+        transform.DOMove(transform.parent.position + new Vector3(0, -9, 60)/*transform.parent.position new Vector3(0, -4, 25)*/, 3);
         yield return new WaitForSeconds(3);
 
         animator.SetFloat("speedMultiply", 1f);
@@ -239,7 +243,7 @@ public class BossManager: MonoBehaviour
     }
     IEnumerator Missile3Coroutine()
     {
-        animator.SetFloat("speedMultiply", 1.89f);
+        animator.SetFloat("speedMultiply", 2.83f);
         animator.SetInteger("states", 1);
 
         yield return new WaitForSeconds(1.5f); //charge
@@ -308,7 +312,7 @@ public class BossManager: MonoBehaviour
 
         yield return new WaitForSeconds(1.2f);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + new Vector3(0, 0, 26f)), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
         yield return new WaitForSeconds(0.8f);
@@ -332,17 +336,17 @@ public class BossManager: MonoBehaviour
 
         yield return new WaitForSeconds(1.2f);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + new Vector3(0, 0, 26f)), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
         yield return new WaitForSeconds(2f);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + new Vector3(0, 0, 26f)), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
         yield return new WaitForSeconds(2f);
 
-        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + player_.forward * 1.5f), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
+        blackHoleCode = Instantiate(blackHolePrefab, (player_.position + new Vector3(0, 0, 26f)), Quaternion.Euler(Vector3.zero), gameObject.transform/*baseTransform*/).GetComponent<BlackHoleS>();
         blackHoleCode.SetValues(timeB, damageB);
 
         yield return new WaitForSeconds(0.8f);
